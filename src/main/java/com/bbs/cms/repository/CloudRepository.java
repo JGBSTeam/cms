@@ -1,5 +1,7 @@
 package com.bbs.cms.repository;
 
+import java.util.List;
+
 import com.bbs.cms.entity.Cloud;
 
 import org.springframework.data.repository.CrudRepository;
@@ -10,7 +12,7 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface CloudRepository extends CrudRepository<Cloud, Integer> {
-    public Iterable<Cloud> findByUsername(String username);
+    public List<Cloud> findByUsername(String username);
     public boolean existsByCloudname(String cloudname);
-    public boolean existsByPort(int port);
+    public boolean existsByOuterport(int port);
 }

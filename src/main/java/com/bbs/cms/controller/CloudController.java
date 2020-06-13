@@ -1,5 +1,6 @@
 package com.bbs.cms.controller;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.bbs.cms.entity.Cloud;
@@ -34,7 +35,7 @@ public class CloudController {
 
     @GetMapping(value="/{username}")
     public Object getCloud(@PathVariable String username){
-        Iterable<Cloud> cloud = cloudRepo.findByUsername(username);
+        List<Cloud> cloud = cloudRepo.findByUsername(username);
         
         return cloud;
     }
@@ -44,7 +45,7 @@ public class CloudController {
         if(cloudRepo.existsByCloudname(cloud.getCloudname()) == false){
             return Result.CloudName_EXISTS.toResponse(HttpStatus.BAD_REQUEST);
         }
-        if(cloudRepo.existsByPort(cloud.getOuterport()) == false){
+        if(cloudRepo.existsByOuterport(cloud.getOuterport()) == false){
             return Result.CloudPort_EXISTS.toResponse(HttpStatus.BAD_REQUEST);
         }
         boolean response = createDocker(cloud);

@@ -16,7 +16,10 @@ public enum Result {
   SUCCESS(0, "success"),
   FAIL(1, "fail"),
   USER_EXISTS(1001, "The username already exists."),
-  USER_NOT_FOUND(1002, "The user could not found.");
+  USER_NOT_FOUND(1002, "The user could not found."),
+  Cloud_NOT_FOUND(1003, "The Cloud could not found."),
+  CloudName_EXISTS(1004, "The Cloudname already exists."),
+  CloudPort_EXISTS(1005, "The Cloud's port already exists.");
 
   private int code;
   private String msg;

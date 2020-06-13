@@ -9,21 +9,16 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.ColumnTransformer;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-/**
- * User
- */
 @Entity
 @Getter
 @Setter
 @ToString
-public class User {
-
+public class Cloud {
     @Id()
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(columnDefinition = "MEDIUMINT(8) UNSIGNED")
@@ -32,15 +27,16 @@ public class User {
     @Column(length=50, unique = true, nullable = false, updatable = false)
     private String username;
 
-    @Column(length = 200, nullable = false)
-    @ColumnTransformer(write = "PASSWORD(?)")
-    private String password;
-
     @Column(length = 50, nullable = false)
-    private String nickname;
+    private String cloudname;
+
+    @Column(columnDefinition = "MEDIUMINT(8) UNSIGNED", nullable = false)
+    private int innerport;
+
+    @Column(columnDefinition = "MEDIUMINT(8) UNSIGNED", nullable = false)
+    private int outerport;
 
     @Column(nullable = false, insertable = false, updatable = false)
     @ColumnDefault(value = "CURRENT_TIMESTAMP")
     private Timestamp createDate;
-
 }

@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 import com.bbs.cms.entity.Cloud;
+import com.bbs.cms.entity.Kind;
 import com.bbs.cms.repository.CloudRepository;
+import com.bbs.cms.repository.KindRepository;
 import com.bbs.cms.result.Result;
 
 import org.apache.commons.exec.CommandLine;
@@ -28,6 +30,9 @@ public class CloudController {
     @Autowired
     public CloudRepository cloudRepo;
 
+    @Autowired
+    public KindRepository kindRepo;
+
     @GetMapping(value="")
     public Iterable<Cloud> getCloud(){
         return cloudRepo.findAll();
@@ -42,15 +47,15 @@ public class CloudController {
 
     @PostMapping(value="")
     public Object createCloud(@RequestBody Cloud cloud){
-        if(cloudRepo.existsByCloudname(cloud.getCloudname()) == false){
+        if(cloudRepo.existsByCloudname(cloud.getCloudname())){
             return Result.CloudName_EXISTS.toResponse(HttpStatus.BAD_REQUEST);
         }
-        if(cloudRepo.existsByOuterport(cloud.getOuterport()) == false){
+        if(cloudRepo.existsByOuterPort(cloud.getOuterPort())){
             return Result.CloudPort_EXISTS.toResponse(HttpStatus.BAD_REQUEST);
         }
         boolean response = createDocker(cloud);
 
-        if(response == false){
+        if(!response){
             return Result.FAIL.toResponse(HttpStatus.BAD_REQUEST);
         }
         cloudRepo.save(cloud);
@@ -63,18 +68,24 @@ public class CloudController {
 
         boolean response = changeDocker(cloud.get(), userCloud);
         if(response == false) return Result.FAIL.toResponse(HttpStatus.BAD_REQUEST);
+
+        userCloud.setIdx(idx);
         cloudRepo.save(userCloud);
 
         return Result.SUCCESS.toResponse(HttpStatus.OK);
     }
 
-    @DeleteMapping(value="/{idx}")
-    public Object removeCloud(@PathVariable int idx){
-        if(cloudRepo.existsById(idx) == false){
+    @DeleteMapping(value="")
+    public Object removeCloud(@RequestBody Cloud cloud){
+        if(!cloudRepo.existsById(cloud.getIdx())){
             return Result.Cloud_NOT_FOUND.toResponse(HttpStatus.BAD_REQUEST);
         }
+        boolean response = deleteDocker(cloud);
+        if(response == false){
+            return Result.FAIL.toResponse(HttpStatus.BAD_REQUEST);
+        }
 
-        cloudRepo.deleteById(idx);
+        cloudRepo.deleteById(cloud.getIdx());
 
         return Result.SUCCESS.toResponse(HttpStatus.OK);
     }
@@ -97,24 +108,73 @@ public class CloudController {
         return exitCode;
     }
 
+    public boolean checkUsing(String using){
+        if(using.equals("실행중")){
+            return true;
+        }
+        return false;
+    }
+    
     public boolean createDocker(Cloud cloud){
-        String shellString = "docker run -itd --previleged --name " + cloud.getCloudname() + " -p " + cloud.getOuterport() + ":" + cloud.getInnerport() + "centos:0.0.1 /sbin/init";
+        Optional<Kind> kind = kindRepo.getByKindName(cloud.getKind());
+        
+        String shellString = "";
+        
+        if(cloud.getKind().equals("Mysql"))
+            shellString = "docker run --name " + cloud.getCloudname() + " -e MYSQL_ROOT_PASSWORD=test1357 -p " + cloud.getOuterPort() + ":" + kind.get().getInnerPort() + " -d " + kind.get().getImage();
+        else
+            shellString = "docker run -itd --privileged --name " + cloud.getCloudname() + " -p " + cloud.getOuterPort() + ":" + kind.get().getInnerPort() + " " + kind.get().getImage() + ":" + kind.get().getTag() +" /sbin/init";
+
         int exitCode = shellCommand(shellString);
         if(exitCode == 1) return false;
         return true;
     }
 
     public boolean changeDocker(Cloud cloud, Cloud userCloud){
-        String shellString = "docker commit "+ cloud.getCloudname() + " " + cloud.getCloudname();
-        int exitCode = shellCommand(shellString);
-        if(exitCode == 1) return false;
-        String shellString2 = "docker stop " + cloud.getCloudname() + " && docker rm " + cloud.getCloudname();
-        exitCode = shellCommand(shellString2);
-        if(exitCode == 1) return false;
-        String shellString3 = "docker run -itd --previleged --name " + userCloud.getCloudname() + " -p " + userCloud.getOuterport() + ":" + userCloud.getInnerport() + "centos:0.0.1 /sbin/init";
-        exitCode = shellCommand(shellString3);
+        Optional<Kind> kind = kindRepo.getByKindName(cloud.getKind());
+        String cloudName = cloud.getCloudname().toLowerCase();
+        //docker image commit
+        String commitShellString = "docker commit "+ cloud.getCloudname() + " " + cloudName;
+        int exitCode = shellCommand(commitShellString);
         if(exitCode == 1) return false;
 
+        //docker stop and docker remove
+        if(checkUsing(cloud.getUsingStatus())){
+            String stopShellString = "docker stop " + cloud.getCloudname();
+            shellCommand(stopShellString);
+        }
+
+        String rmShellString = "docker rm " + cloud.getCloudname();
+        exitCode = shellCommand(rmShellString);
+        if(exitCode == 1) return false;
+
+        //docker run
+        String runShellString = "";
+        if(kind.get().getKindName().equals("Mysql"))
+            runShellString = "docker run -d --name " + userCloud.getCloudname() + " -p " + userCloud.getOuterPort() + ":" + kind.get().getInnerPort() + " " + cloudName;
+        else
+            runShellString = "docker run -itd --privileged --name " + userCloud.getCloudname() + " -p " + userCloud.getOuterPort() + ":" + kind.get().getInnerPort() + " " + cloudName + " /sbin/init";
+        exitCode = shellCommand(runShellString);
+        if(exitCode == 1) return false;
+
+        return true;
+    }
+
+    public boolean deleteDocker(Cloud cloud){
+        int exitCode;
+        if(checkUsing(cloud.getUsingStatus())){
+            String stopShellString = "docker stop " + cloud.getCloudname();
+            exitCode = shellCommand(stopShellString);
+            if(exitCode == 1){
+                return false;
+            }
+
+        }
+        String rmShellString = "docker rm " + cloud.getCloudname();
+        exitCode = shellCommand(rmShellString);
+        if(exitCode == 1){
+            return false;
+        }
         return true;
     }
 }

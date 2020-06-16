@@ -31,10 +31,13 @@ public class Cloud {
     private String cloudname;
 
     @Column(columnDefinition = "MEDIUMINT(8) UNSIGNED", nullable = false)
-    private int innerport;
+    private int outerPort;
 
-    @Column(columnDefinition = "MEDIUMINT(8) UNSIGNED", nullable = false)
-    private int outerport;
+    @Column(length=10, nullable = false, updatable = false)
+    private String kind;
+
+    @Column(length=10, nullable = false)
+    private String usingStatus;
 
     @Column(nullable = false, insertable = false, updatable = false)
     @ColumnDefault(value = "CURRENT_TIMESTAMP")

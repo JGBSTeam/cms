@@ -14,5 +14,5 @@ import org.springframework.stereotype.Repository;
 public interface CloudRepository extends CrudRepository<Cloud, Integer> {
     public List<Cloud> findByUsername(String username);
     public boolean existsByCloudname(String cloudname);
-    public boolean existsByOuterport(int port);
+    public boolean existsByOuterPort(int port);
 }

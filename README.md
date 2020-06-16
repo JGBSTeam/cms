@@ -22,7 +22,7 @@ docker exec "CONTAINER_NAME" /bin/bash
 yum search ssh
 apt search ssh
 ```
-search에 나온 ssh server를 설치 후 다음 명령어로 ssh를 실행시켜줍니다.
++ search에 나온 ssh server를 설치 후 다음 명령어로 ssh를 실행시켜줍니다.
 ```
 systemctl start sshd
 ```

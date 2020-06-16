@@ -1,5 +1,5 @@
 # CMS (Cloud Management System)
-라즈베리파이에 docker를 설치하여 Linux와 Mysql을 제공하는 시스템
++ 라즈베리파이에 docker를 설치하여 Linux와 Mysql을 제공하는 시스템
 
 # 사용환경
 ### 라즈베리파이에 Docker 셋팅
@@ -17,7 +17,7 @@ docker run -itd --name "CONTAINER_NAME" --privileged -p "OUTERPORT":22 "LINUXIMA
 docker exec "CONTAINER_NAME" /bin/bash
 ```
 + docker container에 접속된 것으로 ssh를 설치
-각 linux에 맞는 명령어를 사용해 ssh를 search해 줍니다.
++ 각 linux에 맞는 명령어를 사용해 ssh를 search해 줍니다.
 ```
 yum search ssh
 apt search ssh

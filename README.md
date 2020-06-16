@@ -2,14 +2,14 @@
 라즈베리파이에 docker를 설치하여 Linux와 Mysql을 제공하는 시스템
 
 # 사용환경
-## 라즈베리파이에 Docker 셋팅
+### 라즈베리파이에 Docker 셋팅
 + 다음 명령어를 실행하여 라즈비안에 32bit docker 설치
 ```
 $ curl -fsSL get.docker.com -o get-docker.sh
 $ sudo sh get-docker.sh
 ```
 
-#### Linux 설치 환경
+> #### Linux 설치 환경
 + dockerhub에서 32bit linux(arm32v7) 이미지를 다운
 + docker Container 실행 및 접속
 ```
@@ -27,7 +27,7 @@ search에 나온 ssh server를 설치 후 다음 명령어로 ssh를 실행시�
 systemctl start sshd
 ```
 
-#### Mysql 설치 환경
+> #### Mysql 설치 환경
 + dockerhub에서 32bit Mysql(hypriot/rpi-mysql) 설치
 + docker Container 실행
 ```

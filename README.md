@@ -9,7 +9,7 @@ $ curl -fsSL get.docker.com -o get-docker.sh
 $ sudo sh get-docker.sh
 ```
 
-### Linux 설치 환경
+#### Linux 설치 환경
 + dockerhub에서 32bit linux(arm32v7) 이미지를 다운
 + docker Container 실행 및 접속
 ```
@@ -27,7 +27,7 @@ search에 나온 ssh server를 설치 후 다음 명령어로 ssh를 실행시�
 systemctl start sshd
 ```
 
-### Mysql 설치 환경
+#### Mysql 설치 환경
 + dockerhub에서 32bit Mysql(hypriot/rpi-mysql) 설치
 + docker Container 실행
 ```

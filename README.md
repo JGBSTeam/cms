@@ -39,3 +39,10 @@ $ docker run --name "CONTAINER_NAME" -e MYSQL_ROOT_PASSWORD="YOUR_PASSWORD" -p "
 + maven build를 사용하여 jar파일 추출
 + jar파일을 라즈베리파이에서 실행
 + 각 설정에 맞게 data 전송
+
+## 추가 예정
++ JSP 프론트
+  + 로그인 기능
+  + 서버 실행 중지, 시작 기능
++ Linux Ubuntu 추가
++ 한 컨테이너에서의 여러 포트 맵핑
